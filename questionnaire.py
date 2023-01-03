@@ -1,3 +1,5 @@
+import json
+
 # PROJET QUESTIONNAIRE V3 : POO
 #
 # - Pratiquer sur la POO
@@ -20,10 +22,9 @@
 #
 
 class Question:
-    def __init__(self, titre, choix, bonne_reponse):
+    def __init__(self, titre, choix):
         self.titre = titre
         self.choix = choix
-        self.bonne_reponse = bonne_reponse
 
     def FromData(data):
         # ....
@@ -34,12 +35,14 @@ class Question:
         print("QUESTION")
         print("  " + self.titre)
         for i in range(len(self.choix)):
-            print("  ", i+1, "-", self.choix[i])
+            print("  ", i+1, "-", self.choix[i][0])
+            if self.choix[i][1] == True:
+                self.bonne_reponse = self.choix[i][0]
 
         print()
         resultat_response_correcte = False
         reponse_int = Question.demander_reponse_numerique_utlisateur(1, len(self.choix))
-        if self.choix[reponse_int-1].lower() == self.bonne_reponse.lower():
+        if self.bonne_reponse.lower() == self.choix[reponse_int-1][0].lower() :
             print("Bonne réponse")
             resultat_response_correcte = True
         else:
@@ -61,8 +64,11 @@ class Question:
         return Question.demander_reponse_numerique_utlisateur(min, max)
     
 class Questionnaire:
-    def __init__(self, questions):
+    def __init__(self,questions):
         self.questions = questions
+        # self.categorie = categorie
+        # self.titre = titre
+        # self.difficulte = difficlute
 
     def lancer(self):
         score = 0
@@ -73,13 +79,13 @@ class Questionnaire:
         return score
 
 
-"""questionnaire = (
-    ("Quelle est la capitale de la France ?", ("Marseille", "Nice", "Paris", "Nantes", "Lille"), "Paris"), 
-    ("Quelle est la capitale de l'Italie ?", ("Rome", "Venise", "Pise", "Florence"), "Rome"),
-    ("Quelle est la capitale de la Belgique ?", ("Anvers", "Bruxelles", "Bruges", "Liège"), "Bruxelles")
-                )
+# """questionnaire = (
+#     ("Quelle est la capitale de la France ?", ("Marseille", "Nice", "Paris", "Nantes", "Lille"), "Paris"), 
+#     ("Quelle est la capitale de l'Italie ?", ("Rome", "Venise", "Pise", "Florence"), "Rome"),
+#     ("Quelle est la capitale de la Belgique ?", ("Anvers", "Bruxelles", "Bruges", "Liège"), "Bruxelles")
+#                 )
 
-lancer_questionnaire(questionnaire)"""
+# lancer_questionnaire(questionnaire)"""
 
 # q1 = Question("Quelle est la capitale de la France ?", ("Marseille", "Nice", "Paris", "Nantes", "Lille"), "Paris")
 # q1.poser()
@@ -88,12 +94,38 @@ lancer_questionnaire(questionnaire)"""
 # q = Question.FromData(data)
 # print(q.__dict__)
 
-Questionnaire(
-    (
-    Question("Quelle est la capitale de la France ?", ("Marseille", "Nice", "Paris", "Nantes", "Lille"), "Paris"), 
-    Question("Quelle est la capitale de l'Italie ?", ("Rome", "Venise", "Pise", "Florence"), "Rome"),
-    Question("Quelle est la capitale de la Belgique ?", ("Anvers", "Bruxelles", "Bruges", "Liège"), "Bruxelles")
-    )
-).lancer()
+# Questionnaire(
+#     (
+#     Question("Quelle est la capitale de la France ?", ("Marseille", "Nice", "Paris", "Nantes", "Lille"), "Paris"), 
+#     Question("Quelle est la capitale de l'Italie ?", ("Rome", "Venise", "Pise", "Florence"), "Rome"),
+#     Question("Quelle est la capitale de la Belgique ?", ("Anvers", "Bruxelles", "Bruges", "Liège"), "Bruxelles")
+#     )
+# ).lancer()
+
+
+
+data_file = open("animaux_leschats_confirme.json","r")
+data_file_read = data_file.read()
+data_file.close()
+data_json = json.loads(data_file_read)
+data_question = data_json.get("questions")
+# print(data_json["difficulte"])
+# print(data_json["categorie"])
+
+data_question[0]["choix"]
+
+
+# question = Question("")
+
+data_question[0]["titre"]
+
+questions = []
+
+for i in range (0,len(data_question)):
+    q = Question(data_question[i]["titre"],data_question[i]["choix"])
+    questions.append(q)
+
+Questionnaire(questions).lancer()
+
 
 
