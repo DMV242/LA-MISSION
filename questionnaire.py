@@ -32,7 +32,6 @@ class Question:
         return q
 
     def poser(self):
-        print("QUESTION")
         print("  " + self.titre)
         for i in range(len(self.choix)):
             print("  ", i+1, "-", self.choix[i][0])
@@ -64,16 +63,23 @@ class Question:
         return Question.demander_reponse_numerique_utlisateur(min, max)
     
 class Questionnaire:
-    def __init__(self,questions):
+    def __init__(self,categorie,titre,difficulte,questions):
         self.questions = questions
-        # self.categorie = categorie
-        # self.titre = titre
-        # self.difficulte = difficlute
+        self.categorie = categorie
+        self.titre = titre
+        self.difficulte = difficulte
 
     def lancer(self):
+        print()
+        print(f"Bienvenue sur le questionnaire qui porte sur {self.titre}")
+        print(f"Catégorie : {self.categorie} | difficulté : {self.difficulte}")
+        print(f"nombre total de questions : {len(self.questions)}")
+        print()
+
         score = 0
-        for question in self.questions:
-            if question.poser():
+        for i in range (0,len(self.questions)):
+            print(f"Question n° {i+1} / {len(self.questions)}")
+            if self.questions[i].poser():
                 score += 1
         print("Score final :", score, "sur", len(self.questions))
         return score
@@ -103,21 +109,33 @@ class Questionnaire:
 # ).lancer()
 
 
+filename = "arts_museedulouvre_expert.json"
+print()
 
-data_file = open("animaux_leschats_confirme.json","r")
+while True:
+    propo = input("Voulez vous utiliser un fichier externe (O/N) : " )
+    if propo.lower() in ["non","no","n"]:
+        break
+    if propo.lower() in ["oui","o","yes"]:
+        filename = input("Entrez le fichier à utiliser (spécifier le chemin) : ")
+        break
+
+
+data_file = open(f"{filename}","r")
 data_file_read = data_file.read()
 data_file.close()
 data_json = json.loads(data_file_read)
 data_question = data_json.get("questions")
+
 # print(data_json["difficulte"])
 # print(data_json["categorie"])
 
-data_question[0]["choix"]
+# data_question[0]["choix"]
 
 
 # question = Question("")
 
-data_question[0]["titre"]
+# data_question[0]["titre"]
 
 questions = []
 
@@ -125,7 +143,8 @@ for i in range (0,len(data_question)):
     q = Question(data_question[i]["titre"],data_question[i]["choix"])
     questions.append(q)
 
-Questionnaire(questions).lancer()
+Questionnaire(data_json["categorie"],data_json["titre"],data_json["difficulte"],questions).lancer()
+
 
 
 
